@@ -7,794 +7,756 @@ import random
 
 # ─── PAGE CONFIG ───────────────────────────────────────────────────────────────
 st.set_page_config(
-    page_title="Nash · Doctor Portal",
-    page_icon="🏥",
+    page_title="Nash · Patient Portal",
+    page_icon="🌿",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# ─── CSS — PROFESSIONAL DARK THEME ────────────────────────────────────────────
+# ─── CSS — CLEAN WHITE THEME ──────────────────────────────────────────────────
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700;800;900&family=Lato:wght@300;400;700&display=swap');
 
-html, body, * { font-family: 'Space Grotesk', sans-serif; }
+html, body, * { font-family: 'Lato', sans-serif; }
 #MainMenu, footer, header { visibility: hidden; }
-.block-container { padding: 1rem 2rem 2rem 2rem; background: #0F1117; }
+.block-container { padding: 1rem 2rem 2rem 2rem; background: #FFFFFF; }
+.stApp { background: #FFFFFF !important; }
+.stApp > div { background: #FFFFFF !important; }
 
 :root {
-    --bg:       #0F1117;
-    --surface:  #1A1D27;
-    --surface2: #222536;
-    --surface3: #2A2E42;
-    --teal:     #00C9B1;
-    --teal-dk:  #009E8C;
-    --teal-dim: rgba(0,201,177,0.12);
-    --navy:     #141829;
-    --accent:   #4F8EF7;
-    --accent-dim: rgba(79,142,247,0.12);
-    --gold:     #F5C842;
-    --gold-dim: rgba(245,200,66,0.12);
-    --red:      #FF5C5C;
-    --red-dim:  rgba(255,92,92,0.12);
-    --green:    #4EC97E;
-    --green-dim:rgba(78,201,126,0.12);
-    --orange:   #FF9B4E;
-    --text:     #E8EAF0;
-    --text-sec: #8890A4;
-    --border:   #2A2E42;
-    --border2:  #353A52;
+    --rose:    #D94F45;
+    --rose-lt: #FDF0EF;
+    --rose-dk: #B03830;
+    --teal:    #0D8A82;
+    --teal-lt: #E8F6F5;
+    --teal-dk: #096E68;
+    --peach:   #E07840;
+    --peach-lt:#FDF1E8;
+    --cream:   #FFFFFF;
+    --sand:    #F7F8FA;
+    --text:    #111827;
+    --text-sec:#4B5563;
+    --success: #16A34A;
+    --warning: #D97706;
+    --danger:  #DC2626;
+    --white:   #FFFFFF;
+    --border:  #E5E7EB;
 }
 
-/* Override streamlit background */
-.stApp { background: #0F1117; }
-.stApp > div { background: #0F1117; }
-
 /* NAVBAR */
-.doc-nav {
-    background: linear-gradient(135deg, #141829 0%, #1A1D27 50%, #1E2235 100%);
-    border: 1px solid #2A2E42;
-    border-radius: 16px;
-    padding: 1.1rem 1.8rem;
+.nav-wrap {
+    background: linear-gradient(120deg, #E8837A 0%, #F5A67D 50%, #F5C6A0 100%);
+    border-radius: 20px;
+    padding: 1.2rem 2rem;
     margin-bottom: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.4);
+    box-shadow: 0 8px 30px rgba(232,131,122,0.3);
 }
-.doc-logo {
-    font-size: 1.7rem;
-    font-weight: 700;
-    color: var(--teal);
+.nav-logo {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: white;
     letter-spacing: -0.5px;
 }
-.doc-logo span { color: var(--text); }
-.doc-sub {
-    font-size: 0.72rem;
-    color: var(--text-sec);
-    letter-spacing: 2px;
+.nav-sub {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.85);
+    font-weight: 400;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
 }
-.doc-badge {
-    background: var(--teal-dim);
-    border: 1px solid var(--teal);
-    color: var(--teal);
-    padding: 0.3rem 0.9rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-}
-
-/* STAT CARDS */
-.stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.1rem 1.2rem;
-    position: relative;
-    overflow: hidden;
-}
-.stat-card::after {
-    content: '';
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    height: 2px;
-}
-.stat-card.teal::after  { background: var(--teal); }
-.stat-card.blue::after  { background: var(--accent); }
-.stat-card.red::after   { background: var(--red); }
-.stat-card.green::after { background: var(--green); }
-.stat-icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
-.stat-val {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1;
-    font-family: 'JetBrains Mono', monospace;
-}
-.stat-lbl { font-size: 0.72rem; color: var(--text-sec); margin-top: 0.3rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; }
-
-/* SECTION HEADERS */
-.sec-hd {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: var(--teal);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin: 1.3rem 0 0.7rem 0;
+.nav-user {
+    background: rgba(255,255,255,0.25);
+    border-radius: 40px;
+    padding: 0.5rem 1.1rem;
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    color: white;
+    font-size: 0.85rem;
+    font-weight: 700;
 }
-.sec-line { flex:1; height:1px; background:var(--border); }
 
-/* PATIENT QUEUE ROW */
-.q-row {
-    background: var(--surface);
+/* SIDEBAR NAV PILLS */
+.side-nav {
+    background: white;
+    border-radius: 16px;
+    padding: 1.2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
     border: 1px solid var(--border);
+}
+.nav-pill {
+    display: block;
+    padding: 0.65rem 1rem;
     border-radius: 12px;
-    padding: 0.75rem 1rem;
-    margin-bottom: 0.45rem;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: var(--text-sec);
+    margin-bottom: 0.3rem;
     cursor: pointer;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
+    text-decoration: none;
 }
-.q-row:hover { border-color: var(--teal); }
-.q-row.active { border-color: var(--teal); background: var(--teal-dim); }
-.q-name { font-weight: 600; color: var(--text); font-size: 0.9rem; }
-.q-meta { font-size: 0.72rem; color: var(--text-sec); margin-top: 0.15rem; }
-.q-vital { font-size: 0.7rem; font-weight: 600; }
-
-/* VITAL MINI CARDS */
-.mini-vital {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.7rem 0.9rem;
-    margin-bottom: 0.5rem;
+.nav-pill.active {
+    background: var(--rose-lt);
+    color: var(--rose-dk);
 }
-.mv-label { font-size: 0.65rem; color: var(--text-sec); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-.mv-val {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--teal);
-    line-height: 1.2;
+.nav-pill:hover { background: var(--sand); }
+
+/* VITAL CARDS */
+.vital-card {
+    background: #FFFFFF;
+    border-radius: 18px;
+    padding: 1.2rem 1.3rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    border: 1.5px solid var(--border);
+    position: relative;
+    overflow: hidden;
 }
-.mv-unit { font-size: 0.72rem; color: var(--text-sec); }
-
-/* PILLS */
-.pill { display:inline-block; padding:0.18rem 0.65rem; border-radius:20px; font-size:0.68rem; font-weight:600; margin:0.1rem; }
-.pill-teal   { background:var(--teal-dim);   border:1px solid var(--teal);   color:var(--teal);  }
-.pill-red    { background:var(--red-dim);    border:1px solid var(--red);    color:var(--red);   }
-.pill-green  { background:var(--green-dim);  border:1px solid var(--green);  color:var(--green); }
-.pill-orange { background:rgba(255,155,78,.15);border:1px solid var(--orange);color:var(--orange);}
-.pill-blue   { background:var(--accent-dim); border:1px solid var(--accent); color:var(--accent);}
-.pill-gold   { background:var(--gold-dim);   border:1px solid var(--gold);   color:var(--gold);  }
-
-/* STATUS BADGE */
-.status-waiting { color: var(--orange); font-size:0.7rem; font-weight:700; }
-.status-consult { color: var(--teal);   font-size:0.7rem; font-weight:700; }
-.status-pending { color: var(--text-sec);font-size:0.7rem; font-weight:700; }
-
-/* REPORT FORM */
-.form-section {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1.2rem 1.4rem;
-    margin-bottom: 0.8rem;
-}
-.form-label {
-    font-size: 0.72rem;
-    color: var(--teal);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.vital-card-icon {
+    font-size: 2rem;
     margin-bottom: 0.4rem;
 }
+.vital-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--text-sec);
+    margin-bottom: 0.2rem;
+}
+.vital-value {
+    font-family: 'Nunito', sans-serif;
+    font-size: 2.1rem;
+    font-weight: 900;
+    color: var(--text);
+    line-height: 1;
+}
+.vital-unit { font-size: 0.82rem; font-weight: 400; color: var(--text-sec); }
+.vital-badge {
+    display: inline-block;
+    padding: 0.18rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.68rem;
+    font-weight: 700;
+    margin-top: 0.35rem;
+}
+.badge-normal  { background: #E8F5ED; color: #3A8F5A; }
+.badge-warning { background: #FEF8E7; color: #C07800; }
+.badge-danger  { background: #FDECEC; color: #C03030; }
+.vital-accent {
+    position: absolute;
+    top: 0; right: 0;
+    width: 60px; height: 60px;
+    border-radius: 0 18px 0 60px;
+    opacity: 0.12;
+}
 
-/* PRESCRIPTION ROW */
-.rx-row {
-    background: var(--surface2);
+/* SECTION HEADER */
+.sec-head {
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text);
+    margin: 1.4rem 0 0.8rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.sec-line {
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(90deg, var(--border), transparent);
+    border-radius: 2px;
+}
+
+/* APPOINTMENT CARD */
+.appt-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    border: 1.5px solid var(--border);
+    margin-bottom: 0.7rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.appt-avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0D8A82, #096E68);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+.appt-name { font-weight: 700; color: var(--text); font-size: 0.92rem; }
+.appt-spec { font-size: 0.75rem; color: var(--text-sec); }
+.appt-time { font-size: 0.78rem; color: var(--teal-dk); font-weight: 600; }
+
+/* SUGGEST CARD */
+.sug-card {
+    background: #FFFFFF;
+    border: 1.5px solid #E5E7EB;
+    border-left: 4px solid var(--teal);
+    border-radius: 16px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 0.7rem;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.04);
+}
+.sug-rank { font-family:'Nunito',sans-serif; font-weight:900; font-size:1.5rem; color:var(--teal); }
+.sug-spec { font-weight:700; color:var(--text); font-size:0.95rem; }
+.sug-why  { font-size:0.75rem; color:var(--text-sec); margin-top:0.15rem; }
+
+/* LIVE PULSE */
+.live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: #F0FDF4;
+    color: #16A34A;
+    border: 1px solid #BBF7D0;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+.pulse-dot {
+    width: 7px; height: 7px;
+    background: #16A34A;
+    border-radius: 50%;
+    display: inline-block;
+    animation: blink 1.4s infinite;
+}
+@keyframes blink {
+    0%,100%{opacity:1;transform:scale(1)}
+    50%{opacity:0.4;transform:scale(1.4)}
+}
+
+/* SUMMARY BOX */
+.summary-box {
+    background: var(--teal-lt);
+    border: 1.5px solid var(--teal);
+    border-radius: 14px;
+    padding: 0.9rem 1.1rem;
+    margin: 0.6rem 0;
+}
+
+/* REPORT CARD */
+.report-row {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 0.8rem 1rem;
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0.7rem 1rem;
     margin-bottom: 0.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
 }
-.rx-name { font-weight: 600; color: var(--text); font-size: 0.88rem; }
-.rx-detail { font-size: 0.72rem; color: var(--text-sec); margin-top: 0.1rem; }
-
-/* PROGRESS VISIT */
-.visit-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 3px solid var(--teal);
-    border-radius: 10px;
-    padding: 0.8rem 1rem;
-    margin-bottom: 0.5rem;
-}
-.visit-num  { font-family:'JetBrains Mono',monospace; color:var(--teal); font-weight:600; font-size:0.78rem; }
-.visit-date { font-size:0.72rem; color:var(--text-sec); }
-.visit-note { font-size:0.78rem; color:var(--text); margin-top:0.3rem; }
-
-/* ALERT CARD */
-.alert-card {
-    background: var(--red-dim);
-    border: 1px solid var(--red);
-    border-radius: 12px;
-    padding: 0.8rem 1rem;
-    margin-bottom: 0.5rem;
-}
-.alert-title { font-weight:600; color:var(--red); font-size:0.85rem; }
-.alert-detail { font-size:0.75rem; color:var(--text-sec); margin-top:0.15rem; }
-
-/* DIVIDER */
-.dark-div { height:1px; background:var(--border); margin:1rem 0; }
 
 /* TABS */
 .stTabs [data-baseweb="tab-list"] {
-    gap: 4px;
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 4px;
+    gap: 6px;
+    background: #F3F4F6;
+    border-radius: 14px;
+    padding: 5px;
     border: 1px solid var(--border);
 }
 .stTabs [data-baseweb="tab"] {
-    border-radius: 8px;
-    padding: 0.4rem 1rem;
-    font-weight: 600;
-    font-size: 0.82rem;
+    border-radius: 10px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 700;
+    font-size: 0.85rem;
     color: var(--text-sec);
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: 'Nunito', sans-serif;
 }
 .stTabs [aria-selected="true"] {
     background: var(--teal) !important;
-    color: #0F1117 !important;
+    color: white !important;
 }
 
-/* INPUTS */
-.stTextArea textarea, .stTextInput input, .stSelectbox > div {
-    background: var(--surface2) !important;
-    border: 1px solid var(--border2) !important;
-    color: var(--text) !important;
-    border-radius: 10px !important;
-}
-.stTextArea label, .stTextInput label, .stSelectbox label,
-.stDateInput label, .stMultiSelect label {
-    color: var(--text-sec) !important;
-    font-size: 0.78rem !important;
-}
+/* PILL TAGS */
+.pill { display:inline-block; padding:0.2rem 0.65rem; border-radius:20px; font-size:0.7rem; font-weight:700; margin:0.1rem; }
+.pill-rose  { background:var(--rose-lt);  color:var(--rose-dk); }
+.pill-teal  { background:var(--teal-lt);  color:var(--teal-dk); }
+.pill-peach { background:var(--peach-lt); color:#B05A20; }
+.pill-green { background:#E8F5ED; color:#3A8F5A; }
+.pill-red   { background:#FDECEC; color:#C03030; }
 
-/* BUTTONS */
-.stButton>button {
-    background: linear-gradient(135deg, var(--teal-dk), var(--teal)) !important;
-    color: #0F1117 !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    font-family: 'Space Grotesk', sans-serif !important;
-}
+/* DIVIDER */
+.warm-div { height:2px; background:linear-gradient(90deg,var(--rose-lt),transparent); margin:1rem 0; border-radius:2px; }
 
-/* LIVE BADGE */
-.live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    background: var(--green-dim);
-    border: 1px solid var(--green);
-    color: var(--green);
-    padding: 0.28rem 0.75rem;
+/* PROFILE CARD */
+.profile-card {
+    background: #FFFFFF;
     border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.8px;
+    padding: 1.5rem;
+    border: 1.5px solid var(--border);
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
 }
-.pulse { width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;animation:p 1.4s infinite; }
-@keyframes p{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(1.5)}}
+.profile-avatar {
+    width: 72px; height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dk));
+    margin: 0 auto 0.8rem auto;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+}
+.profile-name { font-family:'Nunito',sans-serif; font-weight:900; font-size:1.2rem; color:var(--text); }
+.profile-meta { font-size:0.78rem; color:var(--text-sec); margin-top:0.2rem; }
 
-/* DATAFRAME */
-.stDataFrame { border-radius: 12px !important; }
+button[kind="primary"], .stButton>button {
+    background: linear-gradient(135deg, var(--teal-dk), var(--teal)) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    font-family: 'Nunito', sans-serif !important;
+    padding: 0.5rem 1.2rem !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
 # ─── MOCK DATA ─────────────────────────────────────────────────────────────────
-def gen_vitals(days=14, seed=42):
-    random.seed(seed)
-    dates = [datetime.now() - timedelta(days=i, hours=random.randint(0,8)) for i in range(days)]
+def gen_vitals(days=14):
+    dates = [datetime.now() - timedelta(days=i, hours=random.randint(0,10)) for i in range(days)]
     dates.reverse()
     return pd.DataFrame({
         "datetime":    dates,
-        "temperature": [round(random.uniform(36.2, 38.4), 1) for _ in range(days)],
-        "heart_rate":  [random.randint(62, 110) for _ in range(days)],
+        "temperature": [round(random.uniform(36.2, 38.6), 1) for _ in range(days)],
+        "heart_rate":  [random.randint(60, 112) for _ in range(days)],
         "spo2":        [random.randint(93, 100)  for _ in range(days)],
-        "bp_sys":      [random.randint(112, 148) for _ in range(days)],
-        "bp_dia":      [random.randint(72, 94)   for _ in range(days)],
+        "bp_sys":      [random.randint(110, 148) for _ in range(days)],
+        "bp_dia":      [random.randint(70, 95)   for _ in range(days)],
     })
 
-patients_queue = [
-    {"name":"Rahul Verma",   "age":45,"id":"P-1042","time":"09:00","vitals_flag":"BP High",  "status":"Waiting",        "ward":"3B","bed":"12"},
-    {"name":"Meena Das",     "age":62,"id":"P-1043","time":"09:30","vitals_flag":"Normal",    "status":"In Consultation","ward":"4A","bed":"7"},
-    {"name":"Suresh Kumar",  "age":38,"id":"P-1044","time":"10:00","vitals_flag":"SpO₂ Low",  "status":"Waiting",        "ward":"2C","bed":"3"},
-    {"name":"Lakshmi Patel", "age":55,"id":"P-1045","time":"10:30","vitals_flag":"Normal",    "status":"Pending",        "ward":"3B","bed":"15"},
-    {"name":"Anil Joshi",    "age":70,"id":"P-1046","time":"11:00","vitals_flag":"HR Alert",  "status":"Pending",        "ward":"5D","bed":"9"},
-]
+vdf = gen_vitals()
+latest = vdf.iloc[-1]
 
-alerts = [
-    {"patient":"Suresh Kumar","id":"P-1044","msg":"SpO₂ dropped to 91% — immediate attention required","time":"2 min ago"},
-    {"patient":"Anil Joshi",  "id":"P-1046","msg":"Heart rate irregular — 118 bpm recorded by Nash","time":"8 min ago"},
+doctors = [
+    {"name":"Dr. Priya Sharma",  "spec":"Cardiologist",      "exp":"12 yrs","rating":4.8,"slots":["10:00 AM","11:30 AM","3:00 PM"],"avatar":"👩‍⚕️"},
+    {"name":"Dr. Arjun Mehta",   "spec":"Pulmonologist",     "exp":"9 yrs", "rating":4.6,"slots":["9:00 AM","2:00 PM","4:30 PM"], "avatar":"👨‍⚕️"},
+    {"name":"Dr. Kavitha Rao",   "spec":"General Physician", "exp":"15 yrs","rating":4.9,"slots":["8:30 AM","12:00 PM","5:00 PM"],"avatar":"👩‍⚕️"},
+    {"name":"Dr. Rohit Nair",    "spec":"Neurologist",       "exp":"11 yrs","rating":4.7,"slots":["10:30 AM","1:30 PM","3:30 PM"],"avatar":"👨‍⚕️"},
 ]
 
 # ─── NAVBAR ────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<div class="doc-nav">
+st.markdown("""
+<div class="nav-wrap">
   <div>
-    <div class="doc-logo">🏥 Nash<span> · Doctor Portal</span></div>
-    <div class="doc-sub">Clinical Management System</div>
+    <div class="nav-logo">🌿 Nash · Patient Portal</div>
+    <div class="nav-sub">Your Health. Your Control.</div>
   </div>
-  <div style="display:flex;align-items:center;gap:1rem;">
-    <div class="live-badge"><span class="pulse"></span> NASH ONLINE</div>
-    <div class="doc-badge">👨‍⚕️ Dr. Priya Sharma · Cardiologist</div>
-    <div style="font-size:0.72rem;color:#8890A4;">{datetime.now().strftime('%a, %d %b %Y')}</div>
+  <div class="nav-user">
+    <span>👤</span>
+    <span>Arjun Krishnan</span>
+    <span style="background:rgba(255,255,255,0.3);border-radius:20px;padding:0.1rem 0.5rem;font-size:0.72rem;">P-1041</span>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
 # ─── TABS ──────────────────────────────────────────────────────────────────────
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
-    "🏠 Dashboard", "👥 Patients", "📋 Medical Reports", "💊 Prescriptions", "📈 Progress"
+    "🏠 Home", "📡 My Vitals", "🧠 Find Doctor", "📅 Appointments", "📋 My Reports"
 ])
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 1 — DASHBOARD
+# TAB 1 — HOME
 # ══════════════════════════════════════════════════════════════════════════════
 with tab1:
-    # Stat cards
-    s1,s2,s3,s4 = st.columns(4)
-    stats = [
-        ("5","Today's Patients","👥","teal"),
-        ("2","Active Alerts","🚨","red"),
-        ("1","In Consultation","🩺","blue"),
-        ("12","This Week","📊","green"),
-    ]
-    for col,(val,lbl,icon,cls) in zip([s1,s2,s3,s4],stats):
-        with col:
-            st.markdown(f"""
-            <div class="stat-card {cls}">
-              <div class="stat-icon">{icon}</div>
-              <div class="stat-val">{val}</div>
-              <div class="stat-lbl">{lbl}</div>
-            </div>""", unsafe_allow_html=True)
+    left, right = st.columns([1, 2.5])
 
-    st.markdown('<div class="dark-div"></div>', unsafe_allow_html=True)
+    with left:
+        # Profile card
+        st.markdown("""
+        <div class="profile-card">
+          <div class="profile-avatar">👤</div>
+          <div class="profile-name">Arjun Krishnan</div>
+          <div class="profile-meta">Age 34 · Male · O+</div>
+          <div class="profile-meta">🏥 Apollo Hospital, Bangalore</div>
+          <div class="profile-meta">Ward 3B · Bed 12</div>
+          <div style="margin-top:0.8rem;">
+            <span class="pill pill-teal">No Allergies</span>
+            <span class="pill pill-rose">Hypertension</span>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-    left_col, right_col = st.columns([1.4, 1])
+        st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
 
-    with left_col:
-        # Alerts
-        st.markdown('<div class="sec-hd">🚨 Active Alerts <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        for a in alerts:
-            st.markdown(f"""
-            <div class="alert-card">
-              <div class="alert-title">⚠️ {a['patient']} ({a['id']})</div>
-              <div class="alert-detail">{a['msg']}</div>
-              <div style="font-size:0.68rem;color:#8890A4;margin-top:0.3rem;">🕐 {a['time']}</div>
-            </div>""", unsafe_allow_html=True)
+        # Quick health summary
+        st.markdown("""
+        <div style="background:white;border-radius:16px;padding:1.1rem;border:1.5px solid #EDE8E1;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+          <div style="font-family:Nunito,sans-serif;font-weight:800;font-size:0.95rem;color:#2D2D2D;margin-bottom:0.7rem;">📊 Health Summary</div>
+          <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #F5EFE6;">
+            <span style="font-size:0.78rem;color:#7A7A8C;">Last Scan</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#2D2D2D;">2 mins ago</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #F5EFE6;">
+            <span style="font-size:0.78rem;color:#7A7A8C;">Total Scans</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#2D2D2D;">14</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid #F5EFE6;">
+            <span style="font-size:0.78rem;color:#7A7A8C;">Upcoming Appt</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#4EADA8;">Tomorrow 10AM</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;padding:0.4rem 0;">
+            <span style="font-size:0.78rem;color:#7A7A8C;">Overall Status</span>
+            <span style="font-size:0.78rem;font-weight:700;color:#C07800;">⚠️ Monitor</span>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
 
-        # Today's queue
-        st.markdown('<div class="sec-hd">🗂️ Today\'s Queue <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        status_map = {"Waiting":"status-waiting","In Consultation":"status-consult","Pending":"status-pending"}
-        vital_pill_map = {"Normal":"pill-green","BP High":"pill-red","SpO₂ Low":"pill-red","HR Alert":"pill-orange"}
-        for p in patients_queue:
-            pill_cls = vital_pill_map.get(p['vitals_flag'],'pill-green')
-            status_cls = status_map.get(p['status'],'status-pending')
-            st.markdown(f"""
-            <div class="q-row">
-              <div style="display:flex;justify-content:space-between;align-items:center;">
-                <div>
-                  <div class="q-name">{p['name']}</div>
-                  <div class="q-meta">⏰ {p['time']} · Age {p['age']} · {p['id']} · Ward {p['ward']} Bed {p['bed']}</div>
-                </div>
-                <div style="text-align:right;">
-                  <span class="pill {pill_cls}">{p['vitals_flag']}</span><br/>
-                  <span class="{status_cls}">{p['status']}</span>
-                </div>
-              </div>
-            </div>""", unsafe_allow_html=True)
+    with right:
+        # Live status
+        col_live, col_time = st.columns([1,1])
+        with col_live:
+            st.markdown('<div class="live-pill"><span class="pulse-dot"></span> NASH ROBOT ACTIVE</div>', unsafe_allow_html=True)
+        with col_time:
+            st.markdown(f'<div style="font-size:0.78rem;color:#7A7A8C;padding-top:0.4rem;">📅 {datetime.now().strftime("%A, %d %B %Y")}</div>', unsafe_allow_html=True)
 
-    with right_col:
-        # Today's vitals overview chart
-        st.markdown('<div class="sec-hd">📡 Nash Feed — Live <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        vdf = gen_vitals()
+        st.markdown('<div class="sec-head">📡 Latest Vitals <div class="sec-line"></div></div>', unsafe_allow_html=True)
+
+        # Vitals row
+        temp_s = "Normal" if 36.1<=latest['temperature']<=37.2 else ("Warning" if latest['temperature']<=38.5 else "danger")
+        hr_s   = "Normal" if 60<=latest['heart_rate']<=100 else "Warning"
+        spo2_s = "Normal" if latest['spo2']>=95 else ("Warning" if latest['spo2']>=92 else "danger")
+        bp_s_  = "Normal" if latest['bp_sys']<120 else ("Warning" if latest['bp_sys']<140 else "danger")
+
+        def vc(icon, label, val, unit, status, color):
+            badge_cls = {"Normal":"badge-normal","Warning":"badge-warning","danger":"badge-danger"}.get(status,"badge-normal")
+            return f"""
+            <div class="vital-card">
+              <div class="vital-accent" style="background:{color};"></div>
+              <div class="vital-card-icon">{icon}</div>
+              <div class="vital-label">{label}</div>
+              <div class="vital-value">{val} <span class="vital-unit">{unit}</span></div>
+              <div><span class="vital-badge {badge_cls}">{status}</span></div>
+            </div>"""
+
+        c1,c2,c3,c4,c5 = st.columns(5)
+        with c1: st.markdown(vc("🌡️","Temp",latest['temperature'],"°C",temp_s,"#E8837A"), unsafe_allow_html=True)
+        with c2: st.markdown(vc("💓","Heart Rate",int(latest['heart_rate']),"bpm",hr_s,"#E91E63"), unsafe_allow_html=True)
+        with c3: st.markdown(vc("🫁","SpO₂",int(latest['spo2']),"%",spo2_s,"#4EADA8"), unsafe_allow_html=True)
+        with c4: st.markdown(vc("🩺","BP Sys",int(latest['bp_sys']),"mmHg",bp_s_,"#F5A67D"), unsafe_allow_html=True)
+        with c5: st.markdown(vc("📈","ECG","Sinus","Rhythm","Normal","#9C27B0"), unsafe_allow_html=True)
+
+        st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
+
+        # Quick mini chart
+        st.markdown('<div class="sec-head">📈 Heart Rate — Last 7 Days <div class="sec-line"></div></div>', unsafe_allow_html=True)
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=vdf['datetime'][-7:], y=vdf['bp_sys'][-7:],
-            mode='lines+markers', name='Systolic',
-            line=dict(color='#FF5C5C', width=2), marker=dict(size=5)
-        ))
-        fig.add_trace(go.Scatter(
             x=vdf['datetime'][-7:], y=vdf['heart_rate'][-7:],
-            mode='lines+markers', name='Heart Rate',
-            line=dict(color='#00C9B1', width=2), marker=dict(size=5)
+            mode='lines+markers',
+            line=dict(color='#E8837A', width=2.5),
+            marker=dict(size=6, color='#E8837A'),
+            fill='tozeroy', fillcolor='rgba(232,131,122,0.1)'
         ))
+        fig.add_hline(y=100, line_dash="dot", line_color="#F0A500", annotation_text="Max")
+        fig.add_hline(y=60,  line_dash="dot", line_color="#5DB075", annotation_text="Min")
         fig.update_layout(
-            height=220, plot_bgcolor='#1A1D27', paper_bgcolor='#1A1D27',
+            height=200, plot_bgcolor='white', paper_bgcolor='white',
             margin=dict(l=10,r=10,t=10,b=10),
-            font=dict(family='Space Grotesk', color='#8890A4', size=10),
-            xaxis=dict(showgrid=False, showticklabels=False, color='#2A2E42'),
-            yaxis=dict(gridcolor='#2A2E42', color='#8890A4'),
-            legend=dict(font=dict(size=10,color='#8890A4'),orientation='h',yanchor='bottom',y=1.02)
+            font=dict(family='Lato'), showlegend=False,
+            xaxis=dict(showgrid=False, showticklabels=False),
+            yaxis=dict(gridcolor='#F5EFE6')
         )
         st.plotly_chart(fig, use_container_width=True)
 
-        # Doctor schedule
-        st.markdown('<div class="sec-hd">📅 My Schedule <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        for p in patients_queue:
-            pill_cls = vital_pill_map.get(p['vitals_flag'],'pill-green')
-            st.markdown(f"""
-            <div style="display:flex;align-items:center;gap:0.8rem;padding:0.5rem 0;border-bottom:1px solid #2A2E42;">
-              <div style="font-family:JetBrains Mono,monospace;color:#00C9B1;font-size:0.82rem;width:48px;">{p['time']}</div>
-              <div style="flex:1;">
-                <div style="font-size:0.83rem;font-weight:600;color:#E8EAF0;">{p['name']}</div>
-                <div style="font-size:0.68rem;color:#8890A4;">{p['id']}</div>
-              </div>
-              <span class="pill {pill_cls}" style="font-size:0.62rem;">{p['vitals_flag']}</span>
-            </div>""", unsafe_allow_html=True)
+        # Upcoming appointment
+        st.markdown('<div class="sec-head">📅 Next Appointment <div class="sec-line"></div></div>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="appt-card" style="border-color:#4EADA8;">
+          <div class="appt-avatar">👩‍⚕️</div>
+          <div style="flex:1;">
+            <div class="appt-name">Dr. Priya Sharma</div>
+            <div class="appt-spec">Cardiologist · Apollo Hospital</div>
+            <div class="appt-time">⏰ Tomorrow · 10:00 AM · Room 204</div>
+          </div>
+          <span class="pill pill-green">Confirmed ✓</span>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 2 — PATIENTS
+# TAB 2 — MY VITALS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab2:
-    sel_patient = st.selectbox(
-        "Select Patient:",
-        [f"{p['time']} · {p['name']} ({p['id']})" for p in patients_queue],
-        label_visibility="collapsed"
-    )
-    sel_idx = [f"{p['time']} · {p['name']} ({p['id']})" for p in patients_queue].index(sel_patient)
-    sp = patients_queue[sel_idx]
-    vdf = gen_vitals(seed=sel_idx*7+1)
-    latest = vdf.iloc[-1]
+    st.markdown('<div class="sec-head">📡 Live Vitals Feed <div class="sec-line"></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="live-pill" style="margin-bottom:0.8rem;"><span class="pulse-dot"></span> NASH SCANNING — REAL TIME</div>', unsafe_allow_html=True)
 
-    st.markdown(f"""
-    <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;
-                padding:1.2rem 1.5rem;margin-bottom:1rem;display:flex;align-items:center;gap:1.5rem;">
-      <div style="width:56px;height:56px;background:linear-gradient(135deg,#009E8C,#00C9B1);
-                  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;">👤</div>
-      <div style="flex:1;">
-        <div style="font-size:1.15rem;font-weight:700;color:#E8EAF0;">{sp['name']}</div>
-        <div style="font-size:0.78rem;color:#8890A4;">Age {sp['age']} · {sp['id']} · Ward {sp['ward']} · Bed {sp['bed']}</div>
-        <div style="margin-top:0.4rem;">
-          <span class="pill pill-teal">Hypertension</span>
-          <span class="pill pill-orange">No Drug Allergies</span>
-          <span class="pill pill-blue">Blood Group: O+</span>
-        </div>
-      </div>
-      <div style="text-align:right;">
-        <div class="live-badge"><span class="pulse"></span> Nash Active</div>
-        <div style="font-size:0.7rem;color:#8890A4;margin-top:0.4rem;">Last scan: 3 min ago</div>
-      </div>
-    </div>
-    """, unsafe_allow_html=True)
+    v1,v2,v3,v4,v5 = st.columns(5)
+    with v1: st.markdown(vc("🌡️","Temperature",latest['temperature'],"°C",temp_s,"#E8837A"), unsafe_allow_html=True)
+    with v2: st.markdown(vc("💓","Heart Rate",int(latest['heart_rate']),"bpm",hr_s,"#E91E63"), unsafe_allow_html=True)
+    with v3: st.markdown(vc("🫁","SpO₂",int(latest['spo2']),"%",spo2_s,"#4EADA8"), unsafe_allow_html=True)
+    with v4: st.markdown(vc("🩺","BP",f"{int(latest['bp_sys'])}/{int(latest['bp_dia'])}","mmHg",bp_s_,"#F5A67D"), unsafe_allow_html=True)
+    with v5: st.markdown(vc("📈","ECG","Normal","Sinus","Normal","#9C27B0"), unsafe_allow_html=True)
 
-    # Vitals grid
-    st.markdown('<div class="sec-hd">📡 Current Vitals <div class="sec-line"></div></div>', unsafe_allow_html=True)
-    vc1,vc2,vc3,vc4,vc5 = st.columns(5)
+    st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">📊 14-Day History Charts <div class="sec-line"></div></div>', unsafe_allow_html=True)
 
-    def dark_vital(col, icon, label, val, unit, color):
-        col.markdown(f"""
-        <div class="mini-vital" style="border-color:{color}22;border-left:3px solid {color};">
-          <div class="mv-label">{icon} {label}</div>
-          <div class="mv-val" style="color:{color};">{val}</div>
-          <div class="mv-unit">{unit}</div>
-        </div>""", unsafe_allow_html=True)
+    ch1, ch2 = st.columns(2)
+    def hex_to_rgba(hex_color, alpha=0.12):
+        h = hex_color.lstrip('#')
+        r, g, b = int(h[0:2],16), int(h[2:4],16), int(h[4:6],16)
+        return f'rgba({r},{g},{b},{alpha})'
 
-    dark_vital(vc1,"🌡️","Temp",   latest['temperature'],     "°C",    "#F5A67D")
-    dark_vital(vc2,"💓","HR",     int(latest['heart_rate']), "bpm",   "#FF5C5C")
-    dark_vital(vc3,"🫁","SpO₂",   int(latest['spo2']),       "%",     "#00C9B1")
-    dark_vital(vc4,"🩺","BP Sys", int(latest['bp_sys']),     "mmHg",  "#4F8EF7")
-    dark_vital(vc5,"📈","ECG",    "Sinus",                   "Rhythm","#F5C842")
-
-    # Charts
-    st.markdown('<div class="sec-hd">📊 14-Day Trend <div class="sec-line"></div></div>', unsafe_allow_html=True)
-
-    def dark_chart(df, ycol, color, title, hlines=[]):
+    def warm_chart(df, col, color, title, ymin=None, ymax=None, hlines=[]):
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=df['datetime'], y=df[ycol],
+            x=df['datetime'], y=df[col],
             mode='lines+markers',
             line=dict(color=color, width=2.5),
             marker=dict(size=5, color=color),
-            fill='tozeroy', fillcolor=color+'22'
+            fill='tozeroy', fillcolor=hex_to_rgba(color)
         ))
-        for val,lbl,lc in hlines:
-            fig.add_hline(y=val,line_dash="dot",line_color=lc,annotation_text=lbl,annotation_font_size=9,annotation_font_color=lc)
+        for val, lbl, lcolor in hlines:
+            fig.add_hline(y=val, line_dash="dot", line_color=lcolor, annotation_text=lbl, annotation_font_size=10)
         fig.update_layout(
-            title=dict(text=title,font=dict(family='Space Grotesk',size=12,color='#8890A4')),
-            height=200, plot_bgcolor='#1A1D27', paper_bgcolor='#1A1D27',
-            margin=dict(l=10,r=10,t=35,b=10),
-            font=dict(family='Space Grotesk',color='#8890A4',size=10), showlegend=False,
-            xaxis=dict(showgrid=False,color='#2A2E42'),
-            yaxis=dict(gridcolor='#2A2E42',color='#8890A4')
+            title=dict(text=title, font=dict(family='Nunito', size=13, color='#2D2D2D')),
+            height=220, plot_bgcolor='#FFFFFF', paper_bgcolor='white',
+            margin=dict(l=10,r=10,t=40,b=10),
+            font=dict(family='Lato'), showlegend=False,
+            xaxis=dict(showgrid=False),
+            yaxis=dict(gridcolor='#F5EFE6', range=[ymin,ymax] if ymin else None)
         )
         return fig
 
-    dc1,dc2 = st.columns(2)
-    with dc1: st.plotly_chart(dark_chart(vdf,'bp_sys','#FF5C5C','🩺 Blood Pressure (Systolic)',hlines=[(120,'Target','#F5C842')]), use_container_width=True)
-    with dc2: st.plotly_chart(dark_chart(vdf,'heart_rate','#00C9B1','💓 Heart Rate (bpm)',hlines=[(100,'Max','#FF5C5C'),(60,'Min','#4EC97E')]), use_container_width=True)
+    with ch1:
+        st.plotly_chart(warm_chart(vdf,'heart_rate','#E8837A','💓 Heart Rate (bpm)',
+            hlines=[(100,'Max Normal','#F0A500'),(60,'Min Normal','#5DB075')]), use_container_width=True)
+    with ch2:
+        fig_bp = go.Figure()
+        fig_bp.add_trace(go.Scatter(x=vdf['datetime'],y=vdf['bp_sys'],mode='lines+markers',
+            name='Systolic',line=dict(color='#E8837A',width=2.5),marker=dict(size=5)))
+        fig_bp.add_trace(go.Scatter(x=vdf['datetime'],y=vdf['bp_dia'],mode='lines+markers',
+            name='Diastolic',line=dict(color='#4EADA8',width=2.5),marker=dict(size=5)))
+        fig_bp.add_hline(y=120,line_dash="dot",line_color="#F0A500",annotation_text="Target")
+        fig_bp.update_layout(title=dict(text='🩺 Blood Pressure (mmHg)',font=dict(family='Nunito',size=13,color='#2D2D2D')),
+            height=220,plot_bgcolor='#FFFFFF',paper_bgcolor='white',
+            margin=dict(l=10,r=10,t=40,b=10),font=dict(family='Lato'),
+            xaxis=dict(showgrid=False),yaxis=dict(gridcolor='#F5EFE6'),
+            legend=dict(orientation='h',yanchor='bottom',y=1.02,font=dict(size=10)))
+        st.plotly_chart(fig_bp, use_container_width=True)
 
-    dc3,dc4 = st.columns(2)
-    with dc3: st.plotly_chart(dark_chart(vdf,'spo2','#4F8EF7','🫁 SpO₂ (%)',hlines=[(95,'Min Normal','#FF9B4E')]), use_container_width=True)
-    with dc4: st.plotly_chart(dark_chart(vdf,'temperature','#F5C842','🌡️ Temperature (°C)',hlines=[(37.2,'Fever','#FF5C5C')]), use_container_width=True)
+    ch3, ch4 = st.columns(2)
+    with ch3:
+        st.plotly_chart(warm_chart(vdf,'temperature','#F5A67D','🌡️ Temperature (°C)',
+            hlines=[(37.2,'Fever Threshold','#E05C5C')]), use_container_width=True)
+    with ch4:
+        st.plotly_chart(warm_chart(vdf,'spo2','#4EADA8','🫁 SpO₂ (%)',ymin=88,ymax=102,
+            hlines=[(95,'Min Normal','#F0A500')]), use_container_width=True)
+
+    st.markdown('<div class="sec-head">🗂️ Scan History Log <div class="sec-line"></div></div>', unsafe_allow_html=True)
+    disp = vdf.copy()
+    disp['datetime'] = disp['datetime'].dt.strftime("%d %b %Y  %I:%M %p")
+    disp.columns = ["Date & Time","Temp (°C)","Heart Rate","SpO₂ (%)","BP Sys","BP Dia"]
+    st.dataframe(disp.iloc[::-1].reset_index(drop=True), use_container_width=True, height=260)
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 3 — MEDICAL REPORTS
+# TAB 3 — FIND DOCTOR
 # ══════════════════════════════════════════════════════════════════════════════
 with tab3:
-    r_left, r_right = st.columns([1.3, 1])
+    st.markdown('<div class="sec-head">🤒 How are you feeling? <div class="sec-line"></div></div>', unsafe_allow_html=True)
 
-    with r_left:
-        st.markdown('<div class="sec-hd">📋 Write Medical Report <div class="sec-line"></div></div>', unsafe_allow_html=True)
+    symp_cols = st.columns(4)
+    all_symptoms = ["Chest Pain","Shortness of Breath","Headache","Fatigue",
+                    "Dizziness","Fever","Cough","Palpitations","Nausea","Joint Pain"]
+    selected_symptoms = st.multiselect("Select your symptoms:", all_symptoms,
+        default=["Chest Pain"] if latest['bp_sys'] > 130 else [])
 
-        sel_pat_r = st.selectbox("Patient:", [f"{p['name']} ({p['id']})" for p in patients_queue], key="r_pat")
+    st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="form-label">Chief Complaint</div>', unsafe_allow_html=True)
-        complaint = st.text_area("", "Patient presents with chest tightness and exertional dyspnea for 3 days. Associated with mild headache.", height=80, key="complaint", label_visibility="collapsed")
+    sug_col, doc_col = st.columns([1,1.5])
 
-        col_d, col_i = st.columns(2)
-        with col_d:
-            st.markdown('<div class="form-label">Diagnosis</div>', unsafe_allow_html=True)
-            diagnosis = st.text_input("", "Hypertension Stage 1", key="diag", label_visibility="collapsed")
-        with col_i:
-            st.markdown('<div class="form-label">Investigations Ordered</div>', unsafe_allow_html=True)
-            invest = st.text_input("", "ECG, Lipid Profile, Echo", key="inv", label_visibility="collapsed")
+    with sug_col:
+        st.markdown('<div class="sec-head">🧠 AI Suggestion <div class="sec-line"></div></div>', unsafe_allow_html=True)
 
-        st.markdown('<div class="form-label">Clinical Examination Notes</div>', unsafe_allow_html=True)
-        exam = st.text_area("", "BP 142/92 mmHg on both arms. Heart sounds S1S2 normal. No murmurs. Lungs clear on auscultation. No pedal edema.", height=90, key="exam", label_visibility="collapsed")
+        suggestions = []
+        if latest['bp_sys'] > 130 or "Chest Pain" in selected_symptoms or "Palpitations" in selected_symptoms:
+            suggestions.append(("1","Cardiologist","👩‍⚕️",
+                f"BP {int(latest['bp_sys'])}/{int(latest['bp_dia'])} mmHg is elevated" +
+                (", chest pain reported" if "Chest Pain" in selected_symptoms else "")))
+        if latest['spo2'] < 95 or "Shortness of Breath" in selected_symptoms or "Cough" in selected_symptoms:
+            suggestions.append(("2","Pulmonologist","👨‍⚕️",
+                f"SpO₂ {int(latest['spo2'])}% — respiratory assessment advised"))
+        if "Headache" in selected_symptoms or "Dizziness" in selected_symptoms:
+            suggestions.append(("3","Neurologist","👨‍⚕️",
+                "Headache/dizziness — neurological evaluation recommended"))
+        if "Fever" in selected_symptoms or latest['temperature'] > 37.5:
+            suggestions.append(("2","General Physician","👩‍⚕️",
+                f"Temp {latest['temperature']}°C — fever management needed"))
+        if not suggestions:
+            suggestions.append(("1","General Physician","👩‍⚕️",
+                "Vitals are normal — routine check-up recommended"))
 
-        st.markdown('<div class="form-label">Treatment Plan</div>', unsafe_allow_html=True)
-        plan = st.text_area("", "Start Amlodipine 5mg OD. Low sodium diet. Daily BP monitoring. Follow up in 2 weeks.", height=70, key="plan", label_visibility="collapsed")
+        for rank, spec, avatar, reason in suggestions[:3]:
+            st.markdown(f"""
+            <div class="sug-card">
+              <div style="display:flex;align-items:center;gap:0.8rem;">
+                <div class="sug-rank">#{rank}</div>
+                <div style="font-size:1.5rem;">{avatar}</div>
+                <div>
+                  <div class="sug-spec">{spec}</div>
+                  <div class="sug-why">🔍 {reason}</div>
+                </div>
+              </div>
+            </div>""", unsafe_allow_html=True)
+
+        # Vitals summary box
+        st.markdown(f"""
+        <div class="summary-box">
+          <div style="font-size:0.72rem;color:#5A6A7A;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">Current Vitals Summary</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.4rem;">
+            <div style="font-size:0.78rem;">🌡️ Temp: <b>{latest['temperature']}°C</b></div>
+            <div style="font-size:0.78rem;">💓 HR: <b>{int(latest['heart_rate'])} bpm</b></div>
+            <div style="font-size:0.78rem;">🫁 SpO₂: <b>{int(latest['spo2'])}%</b></div>
+            <div style="font-size:0.78rem;">🩺 BP: <b>{int(latest['bp_sys'])}/{int(latest['bp_dia'])}</b></div>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    with doc_col:
+        st.markdown('<div class="sec-head">📅 Book Appointment <div class="sec-line"></div></div>', unsafe_allow_html=True)
+
+        suggested_spec = suggestions[0][1] if suggestions else "General Physician"
+        matching = [d for d in doctors if d['spec'] == suggested_spec]
+        if not matching: matching = [doctors[2]]
+
+        sel_doc_name = st.selectbox("Choose Doctor:",
+            [f"{d['avatar']} {d['name']} — {d['spec']} ({d['rating']}★)" for d in doctors])
+        sel_doc = next((d for d in doctors if d['name'] in sel_doc_name), doctors[0])
 
         bc1, bc2 = st.columns(2)
-        with bc1:
-            if st.button("💾 Save Report", use_container_width=True, key="save_r"):
-                st.success("✅ Report saved & shared with patient!")
-        with bc2:
-            if st.button("📄 Export PDF", use_container_width=True, key="exp_r"):
-                st.info("📄 Generating PDF report...")
+        with bc1: appt_date = st.date_input("Date:", min_value=datetime.today())
+        with bc2: slot = st.selectbox("Time Slot:", sel_doc['slots'])
 
-    with r_right:
-        st.markdown('<div class="sec-hd">🗂️ Past Reports <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        past_reports = [
-            {"date":"1 May 2025","patient":"Rahul Verma","diag":"Hypertension Stage 1","type":"Follow-up"},
-            {"date":"24 Apr 2025","patient":"Rahul Verma","diag":"Initial BP Assessment","type":"First Visit"},
-            {"date":"20 Apr 2025","patient":"Meena Das",  "diag":"Type 2 Diabetes Review","type":"Follow-up"},
-            {"date":"15 Apr 2025","patient":"Suresh Kumar","diag":"Respiratory Infection","type":"Acute"},
-            {"date":"10 Apr 2025","patient":"Rahul Verma","diag":"Routine Cardiac Check","type":"Routine"},
-        ]
-        for r in past_reports:
-            st.markdown(f"""
-            <div class="visit-card">
-              <div style="display:flex;justify-content:space-between;">
-                <div>
-                  <div style="font-weight:600;color:#E8EAF0;font-size:0.88rem;">{r['patient']}</div>
-                  <div style="font-size:0.75rem;color:#00C9B1;margin:0.15rem 0;">{r['diag']}</div>
-                  <div style="font-size:0.7rem;color:#8890A4;">📅 {r['date']}</div>
-                </div>
-                <div>
-                  <span class="pill pill-blue">{r['type']}</span>
-                  <div style="font-size:0.68rem;color:#8890A4;margin-top:0.3rem;text-align:right;">View →</div>
-                </div>
-              </div>
-            </div>""", unsafe_allow_html=True)
-
-        # Vitals at current visit
-        st.markdown('<div class="sec-hd">📡 Vitals at This Visit <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        vdf2 = gen_vitals()
-        lat2 = vdf2.iloc[-1]
-        vitals_at_visit = [
-            ("🌡️","Temperature",f"{lat2['temperature']}°C"),
-            ("💓","Heart Rate",  f"{int(lat2['heart_rate'])} bpm"),
-            ("🫁","SpO₂",        f"{int(lat2['spo2'])}%"),
-            ("🩺","Blood Pressure",f"{int(lat2['bp_sys'])}/{int(lat2['bp_dia'])} mmHg"),
-        ]
-        gr1, gr2 = st.columns(2)
-        for i,(icon,label,val) in enumerate(vitals_at_visit):
-            col = gr1 if i%2==0 else gr2
-            col.markdown(f"""
-            <div class="mini-vital">
-              <div class="mv-label">{icon} {label}</div>
-              <div style="font-family:JetBrains Mono,monospace;font-size:1.1rem;font-weight:600;color:#00C9B1;">{val}</div>
-            </div>""", unsafe_allow_html=True)
-
-# ══════════════════════════════════════════════════════════════════════════════
-# TAB 4 — PRESCRIPTIONS
-# ══════════════════════════════════════════════════════════════════════════════
-with tab4:
-    p_left, p_right = st.columns([1.3, 1])
-
-    with p_left:
-        st.markdown('<div class="sec-hd">💊 Write Prescription <div class="sec-line"></div></div>', unsafe_allow_html=True)
-
-        sel_pat_p = st.selectbox("Patient:", [f"{p['name']} ({p['id']})" for p in patients_queue], key="p_pat")
-
-        st.markdown('<div class="form-label">Medicine Name</div>', unsafe_allow_html=True)
-        med_name = st.text_input("", "Amlodipine 5mg", key="m1", label_visibility="collapsed")
-
-        mc1,mc2,mc3 = st.columns(3)
-        with mc1:
-            st.markdown('<div class="form-label">Dosage</div>', unsafe_allow_html=True)
-            dosage = st.text_input("", "5mg", key="d1", label_visibility="collapsed")
-        with mc2:
-            st.markdown('<div class="form-label">Frequency</div>', unsafe_allow_html=True)
-            freq = st.selectbox("", ["Once daily","Twice daily","Thrice daily","SOS","Weekly"], key="f1", label_visibility="collapsed")
-        with mc3:
-            st.markdown('<div class="form-label">Duration</div>', unsafe_allow_html=True)
-            dur = st.text_input("", "30 days", key="dur1", label_visibility="collapsed")
-
-        st.markdown('<div class="form-label">Special Instructions</div>', unsafe_allow_html=True)
-        inst = st.text_input("", "Take after food. Monitor BP daily. Avoid grapefruit juice.", key="inst1", label_visibility="collapsed")
-
-        # Current Rx preview
+        # Doctor info card
         st.markdown(f"""
-        <div style="background:#1A1D27;border:1px dashed #00C9B1;border-radius:12px;padding:0.9rem 1.1rem;margin:0.8rem 0;">
-          <div style="font-size:0.68rem;color:#8890A4;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">Prescription Preview</div>
-          <div style="font-weight:600;color:#E8EAF0;">{med_name}</div>
-          <div style="display:flex;gap:0.4rem;margin:0.3rem 0;">
-            <span class="pill pill-teal">{dosage}</span>
-            <span class="pill pill-blue">{freq}</span>
-            <span class="pill pill-gold">{dur}</span>
+        <div style="background:white;border-radius:14px;padding:1rem;border:1.5px solid #EDE8E1;margin:0.6rem 0;">
+          <div style="display:flex;align-items:center;gap:0.8rem;">
+            <div style="font-size:2rem;">{sel_doc['avatar']}</div>
+            <div>
+              <div style="font-weight:700;color:#2D2D2D;">{sel_doc['name']}</div>
+              <div style="font-size:0.75rem;color:#7A7A8C;">{sel_doc['spec']} · {sel_doc['exp']} · ⭐ {sel_doc['rating']}</div>
+            </div>
           </div>
-          <div style="font-size:0.73rem;color:#8890A4;">📌 {inst}</div>
         </div>""", unsafe_allow_html=True)
 
-        pc1, pc2 = st.columns(2)
-        with pc1:
-            if st.button("➕ Add Medicine", use_container_width=True, key="add_m"):
-                st.success("Medicine added to prescription!")
-        with pc2:
-            if st.button("📄 Generate & Share PDF", use_container_width=True, key="gen_pdf"):
-                st.success("📄 Prescription PDF shared with patient!")
+        notes_input = st.text_area("Any notes for the doctor? (optional)", height=70,
+            placeholder="Describe your symptoms or concerns...")
 
-    with p_right:
-        st.markdown('<div class="sec-hd">📜 Prescription History <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        rx_history = [
-            {"pat":"Rahul Verma",   "med":"Amlodipine 5mg",    "freq":"Once daily", "dur":"30 days","date":"1 May 2025"},
-            {"pat":"Meena Das",     "med":"Metformin 500mg",    "freq":"Twice daily","dur":"90 days","date":"20 Apr 2025"},
-            {"pat":"Suresh Kumar",  "med":"Azithromycin 500mg", "freq":"Once daily", "dur":"5 days", "date":"15 Apr 2025"},
-            {"pat":"Rahul Verma",   "med":"Atorvastatin 10mg",  "freq":"Once daily", "dur":"60 days","date":"10 Apr 2025"},
-            {"pat":"Lakshmi Patel", "med":"Aspirin 75mg",       "freq":"Once daily", "dur":"Ongoing","date":"5 Apr 2025"},
-        ]
-        for rx in rx_history:
-            st.markdown(f"""
-            <div class="rx-row">
-              <div>
-                <div class="rx-name">💊 {rx['med']}</div>
-                <div class="rx-detail">{rx['pat']} · {rx['date']}</div>
-                <div style="margin-top:0.3rem;">
-                  <span class="pill pill-teal" style="font-size:0.62rem;">{rx['freq']}</span>
-                  <span class="pill pill-blue" style="font-size:0.62rem;">{rx['dur']}</span>
-                </div>
-              </div>
-              <span style="color:#8890A4;font-size:0.72rem;cursor:pointer;">📄 View</span>
-            </div>""", unsafe_allow_html=True)
+        if st.button("✅ Confirm Appointment & Set Reminder", use_container_width=True):
+            st.success(f"🎉 Appointment confirmed with {sel_doc['name']} on {appt_date} at {slot}!")
+            st.info("🔔 Push notification reminder will be sent 1 day & 1 hour before your appointment.")
 
 # ══════════════════════════════════════════════════════════════════════════════
-# TAB 5 — PROGRESS TRACKER
+# TAB 4 — APPOINTMENTS
+# ══════════════════════════════════════════════════════════════════════════════
+with tab4:
+    st.markdown('<div class="sec-head">📅 Upcoming Appointments <div class="sec-line"></div></div>', unsafe_allow_html=True)
+
+    upcoming = [
+        {"doctor":"Dr. Priya Sharma","spec":"Cardiologist","date":"Tomorrow","time":"10:00 AM","room":"Room 204","status":"Confirmed","avatar":"👩‍⚕️"},
+        {"doctor":"Dr. Kavitha Rao","spec":"General Physician","date":"12 May 2025","time":"8:30 AM","room":"Room 101","status":"Confirmed","avatar":"👩‍⚕️"},
+    ]
+    for a in upcoming:
+        st.markdown(f"""
+        <div class="appt-card">
+          <div class="appt-avatar">{a['avatar']}</div>
+          <div style="flex:1;">
+            <div class="appt-name">{a['doctor']}</div>
+            <div class="appt-spec">{a['spec']} · Apollo Hospital Bangalore</div>
+            <div class="appt-time">📅 {a['date']} · ⏰ {a['time']} · 📍 {a['room']}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill pill-green">{a['status']} ✓</span>
+            <div style="font-size:0.7rem;color:#7A7A8C;margin-top:0.4rem;">🔔 Reminder set</div>
+          </div>
+        </div>""", unsafe_allow_html=True)
+
+    st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">🗓️ Past Appointments <div class="sec-line"></div></div>', unsafe_allow_html=True)
+
+    past = [
+        {"doctor":"Dr. Priya Sharma","spec":"Cardiologist","date":"1 May 2025","diagnosis":"Hypertension Stage 1","avatar":"👩‍⚕️"},
+        {"doctor":"Dr. Priya Sharma","spec":"Cardiologist","date":"24 Apr 2025","diagnosis":"Initial BP Assessment","avatar":"👩‍⚕️"},
+        {"doctor":"Dr. Kavitha Rao", "spec":"General Physician","date":"10 Apr 2025","diagnosis":"Routine Check-up","avatar":"👩‍⚕️"},
+    ]
+    for p in past:
+        st.markdown(f"""
+        <div class="appt-card" style="opacity:0.85;">
+          <div class="appt-avatar" style="background:linear-gradient(135deg,#C0C8D0,#9AA4AE);">{p['avatar']}</div>
+          <div style="flex:1;">
+            <div class="appt-name">{p['doctor']}</div>
+            <div class="appt-spec">{p['spec']}</div>
+            <div class="appt-time">📅 {p['date']}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill pill-teal">{p['diagnosis']}</span>
+            <div style="font-size:0.7rem;color:#7A7A8C;margin-top:0.3rem;">View Report →</div>
+          </div>
+        </div>""", unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+# TAB 5 — MY REPORTS
 # ══════════════════════════════════════════════════════════════════════════════
 with tab5:
-    st.markdown('<div class="sec-hd">📈 Patient Progress Tracker <div class="sec-line"></div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">📋 Medical Reports <div class="sec-line"></div></div>', unsafe_allow_html=True)
 
-    sel_prog = st.selectbox("Track Patient:", [f"{p['name']} ({p['id']})" for p in patients_queue], key="prog_sel")
-    prog_idx = [f"{p['name']} ({p['id']})" for p in patients_queue].index(sel_prog)
-    pvdf = gen_vitals(seed=prog_idx*5+3)
+    reports = [
+        {"date":"1 May 2025","doctor":"Dr. Priya Sharma","diagnosis":"Hypertension Stage 1","meds":"Amlodipine 5mg","status":"Final"},
+        {"date":"24 Apr 2025","doctor":"Dr. Priya Sharma","diagnosis":"Initial BP Assessment","meds":"Lifestyle changes","status":"Final"},
+        {"date":"10 Apr 2025","doctor":"Dr. Kavitha Rao", "diagnosis":"Routine Check-up","meds":"Vitamins B12","status":"Final"},
+    ]
+    for r in reports:
+        st.markdown(f"""
+        <div class="report-row">
+          <div>
+            <div style="font-weight:700;color:#2D2D2D;font-size:0.9rem;">📄 {r['diagnosis']}</div>
+            <div style="font-size:0.75rem;color:#7A7A8C;">{r['doctor']} · {r['date']}</div>
+            <div style="font-size:0.75rem;color:#4EADA8;margin-top:0.2rem;">💊 {r['meds']}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="pill pill-green">{r['status']}</span>
+            <div style="font-size:0.72rem;color:#7A7A8C;margin-top:0.3rem;">📥 Download PDF</div>
+          </div>
+        </div>""", unsafe_allow_html=True)
 
-    # BP + HR trends side by side
-    pg1, pg2 = st.columns(2)
+    st.markdown('<div class="warm-div"></div>', unsafe_allow_html=True)
+    st.markdown('<div class="sec-head">💊 Prescription History <div class="sec-line"></div></div>', unsafe_allow_html=True)
 
-    with pg1:
-        fig_prog = go.Figure()
-        fig_prog.add_trace(go.Scatter(
-            x=pvdf['datetime'], y=pvdf['bp_sys'],
-            mode='lines+markers', name='Systolic',
-            line=dict(color='#FF5C5C', width=2.5), marker=dict(size=6)
-        ))
-        fig_prog.add_trace(go.Scatter(
-            x=pvdf['datetime'], y=pvdf['bp_dia'],
-            mode='lines+markers', name='Diastolic',
-            line=dict(color='#4F8EF7', width=2.5), marker=dict(size=6)
-        ))
-        fig_prog.add_hline(y=120,line_dash="dot",line_color="#F5C842",annotation_text="Target Sys",annotation_font_size=9,annotation_font_color="#F5C842")
-        fig_prog.update_layout(
-            title=dict(text='🩺 Blood Pressure Progress',font=dict(family='Space Grotesk',size=13,color='#8890A4')),
-            height=260, plot_bgcolor='#1A1D27', paper_bgcolor='#1A1D27',
-            margin=dict(l=10,r=10,t=40,b=10), font=dict(family='Space Grotesk',color='#8890A4',size=10),
-            xaxis=dict(showgrid=False,color='#2A2E42'),
-            yaxis=dict(gridcolor='#2A2E42',color='#8890A4'),
-            legend=dict(orientation='h',yanchor='bottom',y=1.02,font=dict(size=10,color='#8890A4'))
-        )
-        st.plotly_chart(fig_prog, use_container_width=True)
-
-    with pg2:
-        fig_spo = go.Figure()
-        fig_spo.add_trace(go.Scatter(
-            x=pvdf['datetime'], y=pvdf['spo2'],
-            mode='lines+markers', name='SpO₂',
-            line=dict(color='#00C9B1', width=2.5), marker=dict(size=6),
-            fill='tozeroy', fillcolor='rgba(0,201,177,0.1)'
-        ))
-        fig_spo.add_hline(y=95,line_dash="dot",line_color="#FF9B4E",annotation_text="Min Normal",annotation_font_size=9,annotation_font_color="#FF9B4E")
-        fig_spo.update_layout(
-            title=dict(text='🫁 SpO₂ Progress',font=dict(family='Space Grotesk',size=13,color='#8890A4')),
-            height=260, plot_bgcolor='#1A1D27', paper_bgcolor='#1A1D27',
-            margin=dict(l=10,r=10,t=40,b=10), font=dict(family='Space Grotesk',color='#8890A4',size=10),
-            xaxis=dict(showgrid=False,color='#2A2E42'),
-            yaxis=dict(gridcolor='#2A2E42',color='#8890A4',range=[88,102]), showlegend=False
-        )
-        st.plotly_chart(fig_spo, use_container_width=True)
-
-    st.markdown('<div class="dark-div"></div>', unsafe_allow_html=True)
-
-    prog_left, prog_right = st.columns([1, 1.4])
-
-    with prog_left:
-        st.markdown('<div class="sec-hd">🗓️ Visit Timeline <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        visits = [
-            {"v":"Visit 3","date":"7 May 2025", "bp":"132/86","hr":"84","spo2":"97","note":"Good progress. BP improving steadily. Continue medication."},
-            {"v":"Visit 2","date":"1 May 2025", "bp":"138/90","hr":"88","spo2":"96","note":"Moderate improvement. Medication response positive."},
-            {"v":"Visit 1","date":"24 Apr 2025","bp":"148/96","hr":"95","spo2":"94","note":"Initial diagnosis. BP elevated. Started Amlodipine 5mg."},
-        ]
-        for vis in visits:
-            st.markdown(f"""
-            <div class="visit-card">
-              <div style="display:flex;justify-content:space-between;margin-bottom:0.3rem;">
-                <span class="visit-num">{vis['v']}</span>
-                <span class="visit-date">📅 {vis['date']}</span>
-              </div>
-              <div style="display:flex;gap:0.5rem;margin-bottom:0.3rem;">
-                <span class="pill pill-red"  style="font-size:0.62rem;">BP {vis['bp']}</span>
-                <span class="pill pill-teal" style="font-size:0.62rem;">HR {vis['hr']}</span>
-                <span class="pill pill-blue" style="font-size:0.62rem;">SpO₂ {vis['spo2']}%</span>
-              </div>
-              <div class="visit-note">{vis['note']}</div>
-            </div>""", unsafe_allow_html=True)
-
-    with prog_right:
-        st.markdown('<div class="sec-hd">📝 Doctor\'s Notes <div class="sec-line"></div></div>', unsafe_allow_html=True)
-        notes = st.text_area("",
-            "Patient Rahul Verma showing consistent improvement on Amlodipine 5mg. BP has reduced from 148/96 to 132/86 over 3 visits. Target <120/80. Continue current medication. Review lipid profile. Consider ACE inhibitor if BP not at target in next 2 weeks.",
-            height=130, key="dnotes", label_visibility="collapsed")
-
-        st.markdown('<div class="form-label" style="margin-top:0.8rem;">Next Follow-up</div>', unsafe_allow_html=True)
-        fu_date = st.date_input("", min_value=datetime.today(), key="fu_d", label_visibility="collapsed")
-        fu_note = st.text_input("", "Follow-up BP check + lipid profile review", key="fu_n", label_visibility="collapsed")
-
-        if st.button("💾 Save Progress Notes & Schedule Follow-up", use_container_width=True, key="save_prog"):
-            st.success(f"✅ Notes saved. Follow-up scheduled for {fu_date}. Patient notified via push notification!")
-
-        # Progress summary
-        st.markdown("""
-        <div style="background:var(--surface);border:1px solid var(--border);
-                    border-left:3px solid #4EC97E;border-radius:12px;padding:0.9rem 1.1rem;margin-top:0.8rem;">
-          <div style="font-size:0.68rem;color:#4EC97E;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:0.5rem;">📊 Progress Summary</div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem;">
-            <div style="font-size:0.78rem;color:#8890A4;">BP Sys Reduction</div>
-            <div style="font-family:JetBrains Mono,monospace;font-size:0.82rem;color:#4EC97E;font-weight:600;">-16 mmHg ↓</div>
-            <div style="font-size:0.78rem;color:#8890A4;">BP Dia Reduction</div>
-            <div style="font-family:JetBrains Mono,monospace;font-size:0.82rem;color:#4EC97E;font-weight:600;">-10 mmHg ↓</div>
-            <div style="font-size:0.78rem;color:#8890A4;">HR Improvement</div>
-            <div style="font-family:JetBrains Mono,monospace;font-size:0.82rem;color:#4EC97E;font-weight:600;">-11 bpm ↓</div>
-            <div style="font-size:0.78rem;color:#8890A4;">Overall Trend</div>
-            <div style="font-size:0.78rem;color:#4EC97E;font-weight:700;">✅ Improving</div>
+    prescriptions = [
+        {"med":"Amlodipine 5mg","freq":"Once daily","dur":"30 days","doc":"Dr. Priya Sharma","date":"1 May 2025","inst":"After food. Monitor BP daily."},
+        {"med":"Vitamin B12","freq":"Once daily","dur":"60 days","doc":"Dr. Kavitha Rao","date":"10 Apr 2025","inst":"With breakfast."},
+    ]
+    for p in prescriptions:
+        st.markdown(f"""
+        <div style="background:#FFFAF6;border-radius:14px;padding:1rem 1.2rem;
+                    border:1.5px solid #F5EFE6;margin-bottom:0.6rem;">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+            <div>
+              <div style="font-weight:700;color:#2D2D2D;font-size:0.92rem;">💊 {p['med']}</div>
+              <div style="font-size:0.75rem;color:#7A7A8C;margin:0.2rem 0;">{p['doc']} · {p['date']}</div>
+              <span class="pill pill-peach">{p['freq']}</span>
+              <span class="pill pill-rose">{p['dur']}</span>
+              <div style="font-size:0.73rem;color:#7A7A8C;margin-top:0.3rem;">📌 {p['inst']}</div>
+            </div>
+            <span style="font-size:0.7rem;color:#4EADA8;font-weight:700;cursor:pointer;">📄 View</span>
           </div>
         </div>""", unsafe_allow_html=True)
 
 # FOOTER
 st.markdown("""
 <div style="text-align:center;padding:1.5rem 0 0.5rem 0;
-            font-size:0.7rem;color:#8890A4;border-top:1px solid #2A2E42;margin-top:2rem;">
-  🏥 Nash Doctor Portal · Apollo Hospital Bangalore · Clinical Management System v1.0
+            font-size:0.72rem;color:#7A7A8C;border-top:1px solid #EDE8E1;margin-top:2rem;">
+  🌿 Nash Patient Portal · Apollo Hospital Bangalore · Built with ❤️ for better healthcare
 </div>
 """, unsafe_allow_html=True)
